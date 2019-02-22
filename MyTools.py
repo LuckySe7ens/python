@@ -48,7 +48,7 @@ class Ui_Form(QWidget):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(585, 441)
+        Form.resize(585, 541)
         self.textEdit = QtWidgets.QTextEdit(Form)
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 221, 121))
         self.textEdit.setObjectName("textEdit")
@@ -92,6 +92,19 @@ class Ui_Form(QWidget):
         self.lineEdit_5.setGeometry(QtCore.QRect(330, 330, 160, 20))
         self.lineEdit_5.setObjectName("lineEdit_5")
 
+        self.label_4 = QtWidgets.QLabel(Form)
+        self.label_4.setGeometry(QtCore.QRect(80, 400, 211, 16))
+        self.label_4.setObjectName("label_4")
+        self.lineEdit_6 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_6.setGeometry(QtCore.QRect(60, 430, 161, 20))
+        self.lineEdit_6.setObjectName("lineEdit_6")
+        self.pushButton_5 = QtWidgets.QPushButton(Form)
+        self.pushButton_5.setGeometry(QtCore.QRect(230, 430, 75, 23))
+        self.pushButton_5.setObjectName("pushButton_5")
+        self.lineEdit_7 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_7.setGeometry(QtCore.QRect(340, 430, 160, 20))
+        self.lineEdit_7.setObjectName("lineEdit_7")
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -119,13 +132,19 @@ class Ui_Form(QWidget):
         self.label_3.setText(_translate("Form", "Unix时间戳转北京时间"))
         self.pushButton_4.setText(_translate("Form", "转换"))
         self.pushButton_4.clicked.connect(self.on_unix2BjTime)
-
+        self.label_4.setText(_translate("Form","hash 1024"))
+        self.pushButton_5.setText(_translate("Form","转换"))
+        self.pushButton_5.clicked.connect(self.on_hashValue)
     def on_translate(self):
         text = self.textEdit.toPlainText()
         if (text.strip() == ''):
             return
         val = translate(text)
         self.textBrowser.setText(json.loads(val)['translateResult'][0][0]['tgt'])
+
+    def on_hashValue(self):
+        self.lineEdit_7.setText(hashValue(self.lineEdit_6.text()))
+
 
     def on_playVoice(self):
         playMp3(self.textBrowser.toPlainText())
@@ -158,8 +177,12 @@ def str2TimeStamp(str):
         timeStamp = int(time.mktime(timeArray))
         return timeStamp
 
-import datetime
-
+import subprocess
+def hashValue(str):
+    cmd = 'java TestHash ' + str
+    sub = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,universal_newlines=True)
+    sub.wait()
+    return sub.stdout.readline()
 
 def timeStamp2Str(timeStamp):
     timeArray = time.localtime(timeStamp)
